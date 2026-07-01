@@ -24,7 +24,7 @@ The architecture mirrors the sibling `squares` UI; look there for the canonical 
     - `header/Header.tsx` – gold app bar with login/logout.
     - `landing/` – `FloatingIcons`, `Emblem`, `CreateTournamentDialog`, and `animations.ts` (shared `keyframes`).
     - `tournament/` – `MatchCard`, `StandingsTable`, `ScoreDialog`, `Bracket` (custom March-Madness bracket), `ScorePopup` (timed), `ChampionModal` (must-close final celebration).
-    - `toast/` – `ToastProvider.tsx` (the component) and `toastContext.ts` (context + `useToast` hook, kept separate so the provider file only exports a component — react-refresh rule).
+    - `toast/` – `ToastProvider.tsx` (the component) and `toastContext.ts` (context + `useToast` hook, kept separate so the provider file only exports a component; react-refresh rule).
   - `features/tournaments/` – Redux Toolkit slice, thunks, selectors (the only stateful domain).
   - `app/store.ts` – `configureStore`; exports `RootState`, `AppDispatch`, `AppStore`.
   - `service/` – `tournamentService.ts` (axios calls) and `handleError.ts`.
@@ -42,7 +42,7 @@ The architecture mirrors the sibling `squares` UI; look there for the canonical 
 ## Code style
 
 - Function components in `.tsx`; page files `export default`, shared components use named exports.
-- Props via a local `interface Props { ... }`. Use **MUI v9** primitives, the `sx` prop, and theme tokens; animations use `keyframes` from `@emotion/react` (see `components/landing/animations.ts`). Do not import from `@mui/system` (not a direct dependency — it breaks under pnpm's strict resolution).
+- Props via a local `interface Props { ... }`. Use **MUI v9** primitives, the `sx` prop, and theme tokens; animations use `keyframes` from `@emotion/react` (see `components/landing/animations.ts`). Do not import from `@mui/system` (not a direct dependency; it breaks under pnpm's strict resolution).
 - Always use the typed `useAppDispatch`/`useAppSelector`.
 - **No em dashes anywhere in UI copy or comments.**
 - Never type with `any`; sanitize user-controlled strings via `utils/sanitize.ts`.
@@ -58,7 +58,7 @@ Strict **page/hook → service → backend** with Redux as the cache for tournam
 
 ## Toasts (deliberately minimal, no Redux)
 
-`components/toast` is a small React context (`toastContext.ts` + `ToastProvider.tsx`), mounted in `main.tsx`. Use `useToast()` sparingly — currently only to block tied scores and confirm a player swap. Do not route general errors through it.
+`components/toast` is a small React context (`toastContext.ts` + `ToastProvider.tsx`), mounted in `main.tsx`. Use `useToast()` sparingly; currently only to block tied scores and confirm a player swap. Do not route general errors through it.
 
 ## Authentication
 
@@ -77,7 +77,7 @@ Routes are in `main.tsx` with `createBrowserRouter`, all under the `App` layout.
 ## Deployment
 
 - Production build emits `dist/`, served by NGINX via [Dockerfile](Dockerfile) + [nginx.conf](nginx.conf) (keep the SPA fallback `try_files ... /index.html` and the `/health` endpoint). CI uploads `dist/` and the Docker CI builds the image from it.
-- Single replica (`charts/olympics`, namespace `apps`). Don't change the chart from this repo unless asked — coordinate via the `charts` workspace.
+- Single replica (`charts/olympics`, namespace `apps`). Don't change the chart from this repo unless asked; coordinate via the `charts` workspace.
 - Set the OIDC `client_id` (via `VITE_OIDC_CLIENT_ID` or the fallback in `main.tsx`) and the API base URL in `axios/api.ts` for prod (`https://olympics-api.maxstash.io`).
 
 ## Commit conventions

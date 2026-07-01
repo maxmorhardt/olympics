@@ -15,13 +15,21 @@ export function useTournament(id: string) {
   const dispatch = useAppDispatch();
   const auth = useAuth();
 
-  const tournament = useAppSelector(selectCurrentTournament);
+  const current = useAppSelector(selectCurrentTournament);
   const loading = useAppSelector(selectCurrentLoading);
-  const matches = useAppSelector(selectMatches);
-  const standings = useAppSelector(selectStandings);
-  const bracket = useAppSelector(selectBracket);
+  const storeMatches = useAppSelector(selectMatches);
+  const storeStandings = useAppSelector(selectStandings);
+  const storeBracket = useAppSelector(selectBracket);
 
   const [busy, setBusy] = useState(false);
+
+  // only surface store data once it belongs to THIS tournament, so stage pages
+  // never render (or compute canManage) against a previously-viewed tournament
+  const matchesThisTournament = current?.id === id;
+  const tournament = matchesThisTournament ? current : null;
+  const matches = matchesThisTournament ? storeMatches : [];
+  const standings = matchesThisTournament ? storeStandings : [];
+  const bracket = matchesThisTournament ? storeBracket : [];
 
   const canManage = useMemo(() => {
     if (!auth.isAuthenticated || !tournament) {
