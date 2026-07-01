@@ -13,7 +13,6 @@ export const STAGES: Stage[] = [
   { key: 'bracket', label: 'Playoffs', path: 'bracket' },
 ];
 
-// index of the furthest stage a tournament has reached
 export function reachedStageIndex(status: TournamentStatus): number {
   switch (status) {
     case 'setup':

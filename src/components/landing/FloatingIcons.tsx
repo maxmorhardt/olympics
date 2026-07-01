@@ -13,7 +13,6 @@ interface Floater {
 }
 
 // drifting game emojis that fill the whole hero background. Negative, staggered
-// delays mean they are already spread across the full height on first paint.
 export function FloatingIcons({ count = 22 }: { count?: number }) {
   const floaters = useMemo<Floater[]>(
     () =>

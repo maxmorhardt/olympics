@@ -34,7 +34,7 @@ export default function TournamentLayout() {
   const location = useLocation();
 
   const { tournament: loaded, loading, canManage, bracket } = useTournament(id);
-  // ignore any tournament left in the store from a previously viewed one
+  
   const tournament = loaded && loaded.id === id ? loaded : null;
 
   const [scoreEvent, setScoreEvent] = useState<ScoreEvent | null>(null);
@@ -50,7 +50,6 @@ export default function TournamentLayout() {
     if (!final?.winnerTeamId) {
       return null;
     }
-    // resolve full team (with members) from the tournament so we can list players
     const team = tournament.teams?.find((t) => t.id === final.winnerTeamId);
     if (!team) {
       return null;
@@ -58,7 +57,6 @@ export default function TournamentLayout() {
     return { name: team.name, members: (team.members ?? []).map((m) => m.name) };
   }, [tournament, bracket]);
 
-  // reset per-tournament UI state when navigating between tournaments
   useEffect(() => {
     setScoreEvent(null);
     setChampionDismissed(false);
@@ -78,7 +76,6 @@ export default function TournamentLayout() {
     }
   }, [tournament]);
 
-  // real-time updates: reload data and carry every viewer through each stage
   const onMessage = useCallback(
     (msg: WSMessage) => {
       if (msg.type === 'tournament_deleted') {
@@ -88,8 +85,6 @@ export default function TournamentLayout() {
 
       dispatch(fetchTournamentBundle(id));
 
-      // the final's result is celebrated by the champion modal, not the popup;
-      // only treat it as final when the status is explicitly present and finished
       if (msg.type === 'score_recorded' && msg.score) {
         const isFinal = msg.status != null && msg.status === 'finished';
         if (!isFinal) {

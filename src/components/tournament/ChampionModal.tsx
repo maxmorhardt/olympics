@@ -9,7 +9,6 @@ interface Props {
   onClose: () => void;
 }
 
-// big celebratory modal for the overall winner; stays up until dismissed
 export function ChampionModal({ open, championName, members, onClose }: Props) {
   return (
     <Dialog

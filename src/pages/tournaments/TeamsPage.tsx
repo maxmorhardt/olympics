@@ -45,7 +45,6 @@ export default function TeamsPage() {
   const [swapA, setSwapA] = useState('');
   const [swapB, setSwapB] = useState('');
 
-  // only run the draft-style reveal while teams were just generated
   useEffect(() => {
     setRevealed(isRevealStage ? 0 : teams.length);
   }, [tournament?.id, isRevealStage, teams.length]);
@@ -60,7 +59,6 @@ export default function TeamsPage() {
 
   const done = revealed >= teams.length;
 
-  // flat list of players with their team, for the swap selectors
   const players = useMemo(
     () =>
       teams.flatMap((t) =>

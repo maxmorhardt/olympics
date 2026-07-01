@@ -12,7 +12,6 @@ export default function App() {
   const auth = useAuth();
   const hasAttemptedSilentSignin = useRef(false);
 
-  // silent signin on load if we have a refresh token but arent authenticated
   useEffect(() => {
     if (
       auth.isAuthenticated ||

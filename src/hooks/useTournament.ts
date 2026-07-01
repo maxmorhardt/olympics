@@ -11,7 +11,6 @@ import { fetchTournamentBundle, recordResult } from '../features/tournaments/tou
 import { getUsername, isOlympicsAdmin } from '../utils/oidcHelpers';
 import { useAppDispatch, useAppSelector } from './reduxHooks';
 
-// shared data + action layer for every tournament stage page
 export function useTournament(id: string) {
   const dispatch = useAppDispatch();
   const auth = useAuth();

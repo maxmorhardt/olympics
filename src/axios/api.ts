@@ -9,7 +9,6 @@ const api = axios.create({
 });
 
 export const setupAxiosInterceptors = (user: User | null | undefined) => {
-  // always rebuild from scratch to avoid stacking interceptors on token refresh
   api.interceptors.request.clear();
 
   if (!user || !user.access_token) {

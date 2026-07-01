@@ -7,7 +7,6 @@ interface ToastState {
   severity: Severity;
 }
 
-// lightweight, context-based toast. Used sparingly (e.g. blocking a tied score).
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [open, setOpen] = useState(false);
