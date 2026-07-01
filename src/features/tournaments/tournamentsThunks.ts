@@ -113,3 +113,38 @@ export const recordResult = createAsyncThunk<
     return rejectWithValue(err as APIError);
   }
 });
+
+export const deleteTournament = createAsyncThunk<void, string, { rejectValue: APIError }>(
+  'tournaments/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await service.deleteTournament(id);
+    } catch (err: unknown) {
+      return rejectWithValue(err as APIError);
+    }
+  }
+);
+
+export const updateTeam = createAsyncThunk<
+  Tournament,
+  { id: string; teamId: string; name: string },
+  { rejectValue: APIError }
+>('tournaments/updateTeam', async ({ id, teamId, name }, { rejectWithValue }) => {
+  try {
+    return await service.updateTeam(id, teamId, name);
+  } catch (err: unknown) {
+    return rejectWithValue(err as APIError);
+  }
+});
+
+export const swapPlayers = createAsyncThunk<
+  Tournament,
+  { id: string; participantAId: string; participantBId: string },
+  { rejectValue: APIError }
+>('tournaments/swapPlayers', async ({ id, participantAId, participantBId }, { rejectWithValue }) => {
+  try {
+    return await service.swapPlayers(id, participantAId, participantBId);
+  } catch (err: unknown) {
+    return rejectWithValue(err as APIError);
+  }
+});

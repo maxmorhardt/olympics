@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { useMemo } from 'react';
 import { rise } from './animations';
 
-const ICONS = ['🏆', '🥇', '🎯', '🌽', '🍺', '🔥', '🏅', '🎲'];
+const ICONS = ['🏆', '🥇', '🎯', '🌽', '🎲', '🔥', '🏅', '🎉'];
 
 interface Floater {
   icon: string;
@@ -12,17 +12,22 @@ interface Floater {
   delay: number;
 }
 
-// drifting game emojis behind the hero content
-export function FloatingIcons({ count = 14 }: { count?: number }) {
+// drifting game emojis that fill the whole hero background. Negative, staggered
+export function FloatingIcons({ count = 22 }: { count?: number }) {
   const floaters = useMemo<Floater[]>(
     () =>
-      Array.from({ length: count }, (_, i) => ({
-        icon: ICONS[i % ICONS.length],
-        left: Math.random() * 100,
-        size: 18 + Math.random() * 26,
-        duration: 6 + Math.random() * 8,
-        delay: Math.random() * 8,
-      })),
+      Array.from({ length: count }, (_, i) => {
+        const duration = 24 + ((i * 5) % 14);
+        const fraction = (i + 0.5) / count;
+        return {
+          icon: ICONS[i % ICONS.length],
+          left: (i * 41 + 7) % 100,
+          size: 22 + ((i * 13) % 30),
+          duration,
+          // negative delay starts the icon partway up, distributing the field
+          delay: -(fraction * duration),
+        };
+      }),
     [count]
   );
 
@@ -36,7 +41,7 @@ export function FloatingIcons({ count = 14 }: { count?: number }) {
           key={i}
           sx={{
             position: 'absolute',
-            bottom: -40,
+            bottom: 0,
             left: `${f.left}%`,
             fontSize: f.size,
             animation: `${rise} ${f.duration}s linear ${f.delay}s infinite`,

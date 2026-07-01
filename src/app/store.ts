@@ -1,10 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { toastReducer } from '../features/toast/toastSlice';
 import { tournamentsReducer } from '../features/tournaments/tournamentsSlice';
 
 const rootReducer = {
   tournaments: tournamentsReducer,
-  toast: toastReducer,
 };
 
 export const store = configureStore({

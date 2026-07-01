@@ -55,10 +55,6 @@ export interface Tournament {
   id: string;
   name: string;
   status: TournamentStatus;
-  teamSize: number;
-  teamsPerGroup: number;
-  advancePerGroup: number;
-  gameTypes: string[];
   createdBy: string;
   participants?: Participant[];
   teams?: Team[];
@@ -86,8 +82,4 @@ export interface GroupStandings {
 
 export interface CreateTournamentRequest {
   name: string;
-  teamSize: number;
-  teamsPerGroup: number;
-  advancePerGroup: number;
-  gameTypes: string[];
 }

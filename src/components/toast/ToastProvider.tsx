@@ -1,25 +1,41 @@
-import { useSelector } from 'react-redux';
-import { selectToastMessages } from '../../features/toast/toastSelectors';
-import type { ToastMessage } from '../../features/toast/toastSlice';
-import { useToast } from '../../hooks/useToast';
-import { Toast } from './Toast';
+import { Alert, Snackbar } from '@mui/material';
+import { useCallback, useState, type ReactNode } from 'react';
+import { ToastContext, type Severity, type ShowToast } from './toastContext';
 
-export function ToastProvider() {
-  const messages: ToastMessage[] = useSelector(selectToastMessages);
-  const { hideToast } = useToast();
+interface ToastState {
+  message: string;
+  severity: Severity;
+}
+
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toast, setToast] = useState<ToastState | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const showToast = useCallback<ShowToast>((message, severity = 'info') => {
+    setToast({ message, severity });
+    setOpen(true);
+  }, []);
 
   return (
-    <>
-      {messages.map((message) => (
-        <Toast
-          key={message.id}
-          open={true}
-          message={message.message}
-          severity={message.severity}
-          onClose={() => hideToast(message.id)}
-          autoHideDuration={message.duration}
-        />
-      ))}
-    </>
+    <ToastContext.Provider value={showToast}>
+      {children}
+      {toast && (
+        <Snackbar
+          open={open}
+          autoHideDuration={4000}
+          onClose={() => setOpen(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            severity={toast.severity}
+            variant="filled"
+            onClose={() => setOpen(false)}
+            sx={{ color: 'white' }}
+          >
+            {toast.message}
+          </Alert>
+        </Snackbar>
+      )}
+    </ToastContext.Provider>
   );
 }

@@ -11,10 +11,9 @@ import type { GroupStandings } from '../../types/tournament';
 
 interface Props {
   group: GroupStandings;
-  advancePerGroup: number;
 }
 
-export function StandingsTable({ group, advancePerGroup }: Props) {
+export function StandingsTable({ group }: Props) {
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
@@ -30,14 +29,9 @@ export function StandingsTable({ group, advancePerGroup }: Props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {group.standings.map((row, idx) => (
+          {group.standings.map((row) => (
             <TableRow key={row.teamId}>
-              <TableCell
-                sx={{ fontWeight: idx < advancePerGroup ? 700 : 400 }}
-              >
-                {idx < advancePerGroup ? '✓ ' : ''}
-                {row.teamName}
-              </TableCell>
+              <TableCell>{row.teamName}</TableCell>
               <TableCell align="right">{row.wins}</TableCell>
               <TableCell align="right">{row.losses}</TableCell>
               <TableCell align="right">{row.pointDiff}</TableCell>

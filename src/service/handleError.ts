@@ -1,7 +1,6 @@
 import { isAxiosError } from 'axios';
 import type { APIError } from '../types/error';
 
-// normalize any thrown value (axios or otherwise) into an APIError
 export function handleError(err: unknown): APIError {
   const now = new Date().toISOString();
 

@@ -7,11 +7,17 @@ import { Provider } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import { store } from './app/store';
+import { ToastProvider } from './components/toast/ToastProvider';
 import './index.css';
 import CallbackPage from './pages/auth/CallbackPage';
 import NotFoundPage from './pages/error/NotFoundPage';
 import LandingPage from './pages/landing/LandingPage';
-import TournamentPage from './pages/tournaments/TournamentPage';
+import BracketPage from './pages/tournaments/BracketPage';
+import GroupsPage from './pages/tournaments/GroupsPage';
+import SetupPage from './pages/tournaments/SetupPage';
+import StageRedirect from './pages/tournaments/StageRedirect';
+import TeamsPage from './pages/tournaments/TeamsPage';
+import TournamentLayout from './pages/tournaments/TournamentLayout';
 import { theme } from './theme';
 
 const oidcConfig: AuthProviderProps = {
@@ -30,7 +36,17 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <LandingPage /> },
-      { path: 'tournaments/:id', element: <TournamentPage /> },
+      {
+        path: 'tournaments/:id',
+        element: <TournamentLayout />,
+        children: [
+          { index: true, element: <StageRedirect /> },
+          { path: 'setup', element: <SetupPage /> },
+          { path: 'teams', element: <TeamsPage /> },
+          { path: 'groups', element: <GroupsPage /> },
+          { path: 'bracket', element: <BracketPage /> },
+        ],
+      },
       { path: 'auth/callback', element: <CallbackPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
@@ -43,7 +59,9 @@ createRoot(document.getElementById('root')!).render(
       <ThemeProvider theme={theme}>
         <AuthProvider {...oidcConfig}>
           <CssBaseline />
-          <RouterProvider router={router} />
+          <ToastProvider>
+            <RouterProvider router={router} />
+          </ToastProvider>
         </AuthProvider>
       </ThemeProvider>
     </Provider>

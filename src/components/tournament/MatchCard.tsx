@@ -1,14 +1,16 @@
 import { Box, Button, Chip, Paper, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
+import { useToast } from '../toast/toastContext';
 import type { Match } from '../../types/tournament';
 
 interface Props {
   match: Match;
   canManage: boolean;
-  onRecord: (matchId: string, teamAScore: number, teamBScore: number) => Promise<void>;
+  onRecord: (matchId: string, teamAScore: number, teamBScore: number) => Promise<unknown>;
 }
 
 export function MatchCard({ match, canManage, onRecord }: Props) {
+  const showToast = useToast();
   const [scoreA, setScoreA] = useState('');
   const [scoreB, setScoreB] = useState('');
   const [saving, setSaving] = useState(false);
@@ -22,9 +24,19 @@ export function MatchCard({ match, canManage, onRecord }: Props) {
   const bWon = completed && match.winnerTeamId === match.teamBId;
 
   const handleSubmit = async () => {
+    const a = Number(scoreA);
+    const b = Number(scoreB);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) {
+      showToast('Enter a valid score for each team', 'warning');
+      return;
+    }
+    if (a === b) {
+      showToast('Scores cannot be tied', 'warning');
+      return;
+    }
     setSaving(true);
     try {
-      await onRecord(match.id, Number(scoreA), Number(scoreB));
+      await onRecord(match.id, a, b);
     } finally {
       setSaving(false);
     }
@@ -77,6 +89,7 @@ export function MatchCard({ match, canManage, onRecord }: Props) {
             size="small"
             onClick={handleSubmit}
             disabled={saving || scoreA === '' || scoreB === ''}
+            // tie is validated on submit so the user gets a toast
           >
             Save
           </Button>

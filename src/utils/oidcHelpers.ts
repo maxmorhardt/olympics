@@ -2,7 +2,6 @@ import type { User } from 'oidc-client-ts';
 
 export const OLYMPICS_ADMIN_GROUP = 'olympics-admin';
 
-// true only when a stored session has a refresh token but an expired/missing access token
 export const isSilentRefreshNeeded = (): boolean => {
   try {
     const key = Object.keys(localStorage).find((k) => k.startsWith('oidc.user:'));
