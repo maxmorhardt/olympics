@@ -37,12 +37,18 @@ export function ScoreDialog({ match, onClose, onSubmit }: Props) {
   const teamBName = match.teamB?.name ?? 'TBD';
 
   const handleSubmit = async () => {
-    if (Number(scoreA) === Number(scoreB)) {
+    const a = Number(scoreA);
+    const b = Number(scoreB);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) {
+      showToast('Enter a valid score for each team', 'warning');
+      return;
+    }
+    if (a === b) {
       showToast('Scores cannot be tied', 'warning');
       return;
     }
     setSaving(true);
-    const ok = await onSubmit(match.id, Number(scoreA), Number(scoreB));
+    const ok = await onSubmit(match.id, a, b);
     setSaving(false);
     if (ok) {
       onClose();

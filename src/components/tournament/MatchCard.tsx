@@ -24,13 +24,19 @@ export function MatchCard({ match, canManage, onRecord }: Props) {
   const bWon = completed && match.winnerTeamId === match.teamBId;
 
   const handleSubmit = async () => {
-    if (Number(scoreA) === Number(scoreB)) {
+    const a = Number(scoreA);
+    const b = Number(scoreB);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) {
+      showToast('Enter a valid score for each team', 'warning');
+      return;
+    }
+    if (a === b) {
       showToast('Scores cannot be tied', 'warning');
       return;
     }
     setSaving(true);
     try {
-      await onRecord(match.id, Number(scoreA), Number(scoreB));
+      await onRecord(match.id, a, b);
     } finally {
       setSaving(false);
     }

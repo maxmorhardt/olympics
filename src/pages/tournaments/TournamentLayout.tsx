@@ -58,6 +58,14 @@ export default function TournamentLayout() {
     return { name: team.name, members: (team.members ?? []).map((m) => m.name) };
   }, [tournament, bracket]);
 
+  // reset per-tournament UI state when navigating between tournaments
+  useEffect(() => {
+    setScoreEvent(null);
+    setChampionDismissed(false);
+    setConfirmDelete(false);
+    statusRef.current = null;
+  }, [id]);
+
   useEffect(() => {
     if (id) {
       dispatch(fetchTournamentBundle(id));
@@ -80,9 +88,13 @@ export default function TournamentLayout() {
 
       dispatch(fetchTournamentBundle(id));
 
-      // the final's result is celebrated by the champion modal, not the popup
-      if (msg.type === 'score_recorded' && msg.score && msg.status !== 'finished') {
-        setScoreEvent({ ...msg.score, key: Date.now() });
+      // the final's result is celebrated by the champion modal, not the popup;
+      // only treat it as final when the status is explicitly present and finished
+      if (msg.type === 'score_recorded' && msg.score) {
+        const isFinal = msg.status != null && msg.status === 'finished';
+        if (!isFinal) {
+          setScoreEvent({ ...msg.score, key: Date.now() });
+        }
       }
 
       if (msg.status && msg.status !== statusRef.current) {

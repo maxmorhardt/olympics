@@ -1,9 +1,9 @@
-import type { TournamentStatus } from './tournament';
+import type { MatchStage, TournamentStatus } from './tournament';
 
 export type WSType = 'tournament_updated' | 'score_recorded' | 'tournament_deleted';
 
 export interface WSScore {
-  stage: string;
+  stage: MatchStage;
   gameType: string;
   teamAName: string;
   teamBName: string;
