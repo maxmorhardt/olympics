@@ -44,9 +44,9 @@ export function ScorePopup({ event }: { event: ScoreEvent | null }) {
       <Box
         key={current.key}
         sx={{
-          width: { xs: 340, sm: 460 },
+          width: { xs: 280, sm: 460 },
           maxWidth: '92vw',
-          p: 3.5,
+          p: { xs: 2, sm: 3.5 },
           borderRadius: 4,
           textAlign: 'center',
           color: '#ffffff',
@@ -58,9 +58,9 @@ export function ScorePopup({ event }: { event: ScoreEvent | null }) {
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1 }}>
           <Box sx={{ animation: `${floatY} 2.4s ease-in-out infinite`, display: 'flex' }}>
             {isPlayoff ? (
-              <EmojiEventsIcon sx={{ color: '#FFD27D', fontSize: 30 }} />
+              <EmojiEventsIcon sx={{ color: '#FFD27D', fontSize: { xs: 24, sm: 30 } }} />
             ) : (
-              <SportsScoreIcon sx={{ color: '#FFD27D', fontSize: 28 }} />
+              <SportsScoreIcon sx={{ color: '#FFD27D', fontSize: { xs: 22, sm: 28 } }} />
             )}
           </Box>
           <Typography
@@ -76,14 +76,14 @@ export function ScorePopup({ event }: { event: ScoreEvent | null }) {
             fontWeight: 900,
             color: '#ffffff',
             lineHeight: 1.15,
-            fontSize: isPlayoff ? { xs: '1.9rem', sm: '2.4rem' } : { xs: '1.5rem', sm: '1.9rem' },
+            fontSize: isPlayoff ? { xs: '1.5rem', sm: '2.4rem' } : { xs: '1.25rem', sm: '1.9rem' },
             textShadow: '0 2px 18px rgba(255,112,67,0.55)',
           }}
         >
           {winner} beats {loser}
         </Typography>
 
-        <Typography sx={{ mt: 1, fontWeight: 700, fontSize: '1.2rem', color: '#FFD27D' }}>
+        <Typography sx={{ mt: 1, fontWeight: 700, fontSize: { xs: '1rem', sm: '1.2rem' }, color: '#FFD27D' }}>
           ({winnerScore}, {loserScore})
         </Typography>
       </Box>

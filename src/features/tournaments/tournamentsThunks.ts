@@ -114,6 +114,17 @@ export const recordResult = createAsyncThunk<
   }
 });
 
+export const rollbackResult = createAsyncThunk<Match, string, { rejectValue: APIError }>(
+  'tournaments/rollbackResult',
+  async (matchId, { rejectWithValue }) => {
+    try {
+      return await service.rollbackResult(matchId);
+    } catch (err: unknown) {
+      return rejectWithValue(err as APIError);
+    }
+  }
+);
+
 export const deleteTournament = createAsyncThunk<void, string, { rejectValue: APIError }>(
   'tournaments/delete',
   async (id, { rejectWithValue }) => {

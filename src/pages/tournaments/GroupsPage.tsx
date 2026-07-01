@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MatchCard } from '../../components/tournament/MatchCard';
 import { StandingsTable } from '../../components/tournament/StandingsTable';
 import { generatePlayoffs } from '../../features/tournaments/tournamentsThunks';
+import { useToast } from '../../components/toast/toastContext';
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import { useTournament } from '../../hooks/useTournament';
 import type { Match } from '../../types/tournament';
@@ -13,7 +14,8 @@ export default function GroupsPage() {
   const { id = '' } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { tournament, matches, standings, canManage, busy, runAction, handleRecord } =
+  const showToast = useToast();
+  const { tournament, matches, standings, canManage, busy, runAction, handleRecord, handleRollback } =
     useTournament(id);
 
   const groupMatches = useMemo(() => matches.filter((m) => m.stage === 'group'), [matches]);
@@ -32,10 +34,12 @@ export default function GroupsPage() {
   }, [groupMatches]);
 
   const handleGeneratePlayoffs = async () => {
-    const ok = await runAction(dispatch(generatePlayoffs(id)));
-    if (ok) {
-      navigate(`/tournaments/${id}/bracket`);
+    const err = await runAction(dispatch(generatePlayoffs(id)));
+    if (err) {
+      showToast(err, 'error');
+      return;
     }
+    navigate(`/tournaments/${id}/bracket`);
   };
 
   return (
@@ -105,7 +109,9 @@ export default function GroupsPage() {
                           key={m.id}
                           match={m}
                           canManage={canManage}
+                          allowRollback={tournament?.status === 'group_stage'}
                           onRecord={handleRecord}
+                          onRollback={handleRollback}
                         />
                       ))}
                     </Box>

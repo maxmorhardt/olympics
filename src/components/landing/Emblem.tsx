@@ -8,8 +8,8 @@ export function Emblem({ icon = '🏆' }: { icon?: string }) {
       <Box
         sx={{
           position: 'relative',
-          width: 160,
-          height: 160,
+          width: { xs: 112, sm: 160 },
+          height: { xs: 112, sm: 160 },
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
@@ -37,7 +37,9 @@ export function Emblem({ icon = '🏆' }: { icon?: string }) {
           },
         }}
       >
-        <Box sx={{ position: 'relative', zIndex: 2, fontSize: 72, lineHeight: 1 }}>{icon}</Box>
+        <Box sx={{ position: 'relative', zIndex: 2, fontSize: { xs: 50, sm: 72 }, lineHeight: 1 }}>
+          {icon}
+        </Box>
       </Box>
     </Box>
   );

@@ -7,7 +7,12 @@ import {
   selectMatches,
   selectStandings,
 } from '../features/tournaments/tournamentsSelectors';
-import { fetchTournamentBundle, recordResult } from '../features/tournaments/tournamentsThunks';
+import {
+  fetchTournamentBundle,
+  recordResult,
+  rollbackResult,
+} from '../features/tournaments/tournamentsThunks';
+import type { APIError } from '../types/error';
 import { getUsername, isOlympicsAdmin } from '../utils/oidcHelpers';
 import { useAppDispatch, useAppSelector } from './reduxHooks';
 
@@ -40,14 +45,15 @@ export function useTournament(id: string) {
 
   const reload = () => dispatch(fetchTournamentBundle(id));
 
-  const runAction = async (action: { unwrap: () => Promise<unknown> }) => {
+  // returns null on success or a user-facing error message on failure
+  const runAction = async (action: { unwrap: () => Promise<unknown> }): Promise<string | null> => {
     setBusy(true);
     try {
       await action.unwrap();
       await reload();
-      return true;
-    } catch {
-      return false;
+      return null;
+    } catch (err: unknown) {
+      return (err as APIError)?.message ?? 'Something went wrong';
     } finally {
       setBusy(false);
     }
@@ -55,6 +61,8 @@ export function useTournament(id: string) {
 
   const handleRecord = (matchId: string, teamAScore: number, teamBScore: number) =>
     runAction(dispatch(recordResult({ matchId, teamAScore, teamBScore })));
+
+  const handleRollback = (matchId: string) => runAction(dispatch(rollbackResult(matchId)));
 
   return {
     tournament,
@@ -66,6 +74,7 @@ export function useTournament(id: string) {
     busy,
     runAction,
     handleRecord,
+    handleRollback,
     reload,
   };
 }

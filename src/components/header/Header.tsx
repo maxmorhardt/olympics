@@ -3,7 +3,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
 import { useAuth } from 'react-oidc-context';
 import { useNavigate } from 'react-router-dom';
-import { gradients } from '../../theme';
 import { getUsername } from '../../utils/oidcHelpers';
 
 export default function Header() {
@@ -15,57 +14,62 @@ export default function Header() {
     auth.signinRedirect();
   };
 
-  const onGold = '#1a1207';
-
   return (
     <AppBar
-      position="static"
+      position="sticky"
       elevation={0}
-      sx={{ background: gradients.gold, color: onGold }}
+      sx={{
+        top: 0,
+        background: 'rgba(18, 18, 18, 0.85)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+      }}
     >
-      <Container maxWidth="lg">
-        <Toolbar disableGutters>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
+        <Toolbar disableGutters sx={{ minHeight: { xs: 56, sm: 64 } }}>
           <Box
-            sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', flexGrow: 1 }}
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
             onClick={() => navigate('/')}
           >
-            <EmojiEventsIcon sx={{ color: onGold }} />
+            <EmojiEventsIcon sx={{ color: 'primary.main', fontSize: { xs: 22, sm: 26 } }} />
             <Typography
               variant="h6"
               noWrap
-              sx={{ fontFamily: 'monospace', fontWeight: 800, letterSpacing: '.1em', color: onGold }}
+              sx={{
+                fontFamily: 'monospace',
+                fontWeight: 800,
+                letterSpacing: '.12em',
+                color: 'primary.main',
+                fontSize: { xs: '1.05rem', sm: '1.25rem' },
+              }}
             >
               Olympics
             </Typography>
           </Box>
 
+          <Box sx={{ flexGrow: 1 }} />
+
           {auth.isAuthenticated ? (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
               <Typography
                 variant="body2"
-                sx={{ display: { xs: 'none', sm: 'block' }, fontWeight: 600, color: onGold }}
+                noWrap
+                sx={{ display: { xs: 'none', sm: 'block' }, fontWeight: 600, color: 'text.secondary' }}
               >
                 {getUsername(auth.user)}
               </Typography>
               <Button
                 variant="outlined"
+                color="primary"
+                size="small"
                 startIcon={<LogoutIcon />}
                 onClick={() => auth.signoutSilent()}
-                sx={{
-                  color: onGold,
-                  borderColor: 'rgba(26,18,7,0.5)',
-                  '&:hover': { borderColor: onGold, background: 'rgba(26,18,7,0.08)' },
-                }}
               >
                 Logout
               </Button>
             </Box>
           ) : (
-            <Button
-              variant="contained"
-              onClick={handleLogin}
-              sx={{ background: '#1a1207', color: '#F5D7A1', '&:hover': { background: '#2a1f10' } }}
-            >
+            <Button variant="contained" color="primary" size="small" onClick={handleLogin}>
               Login
             </Button>
           )}

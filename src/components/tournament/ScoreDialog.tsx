@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Dialog,
@@ -9,24 +10,24 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useToast } from '../toast/toastContext';
 import type { Match } from '../../types/tournament';
 
 interface Props {
   match: Match | null;
   onClose: () => void;
-  onSubmit: (matchId: string, teamAScore: number, teamBScore: number) => Promise<boolean>;
+  onSubmit: (matchId: string, teamAScore: number, teamBScore: number) => Promise<string | null>;
 }
 
 export function ScoreDialog({ match, onClose, onSubmit }: Props) {
-  const showToast = useToast();
   const [scoreA, setScoreA] = useState('');
   const [scoreB, setScoreB] = useState('');
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setScoreA('');
     setScoreB('');
+    setError(null);
   }, [match]);
 
   if (!match) {
@@ -40,19 +41,22 @@ export function ScoreDialog({ match, onClose, onSubmit }: Props) {
     const a = Number(scoreA);
     const b = Number(scoreB);
     if (!Number.isFinite(a) || !Number.isFinite(b)) {
-      showToast('Enter a valid score for each team', 'warning');
+      setError('Enter a valid score for each team');
       return;
     }
     if (a === b) {
-      showToast('Scores cannot be tied', 'warning');
+      setError('Scores cannot be tied');
       return;
     }
+    setError(null);
     setSaving(true);
-    const ok = await onSubmit(match.id, a, b);
+    const err = await onSubmit(match.id, a, b);
     setSaving(false);
-    if (ok) {
-      onClose();
+    if (err) {
+      setError(err);
+      return;
     }
+    onClose();
   };
 
   return (
@@ -81,6 +85,11 @@ export function ScoreDialog({ match, onClose, onSubmit }: Props) {
             fullWidth
           />
         </Box>
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

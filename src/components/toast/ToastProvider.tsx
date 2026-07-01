@@ -24,7 +24,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           open={open}
           autoHideDuration={4000}
           onClose={() => setOpen(false)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          sx={{ top: { xs: 64, sm: 76 } }}
         >
           <Alert
             severity={toast.severity}

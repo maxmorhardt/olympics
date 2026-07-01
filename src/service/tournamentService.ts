@@ -112,6 +112,15 @@ export async function recordResult(
   }
 }
 
+export async function rollbackResult(matchId: string): Promise<Match> {
+  try {
+    const res = await api.post<Match>(`/matches/${matchId}/rollback`);
+    return res.data;
+  } catch (err: unknown) {
+    throw handleError(err);
+  }
+}
+
 export async function deleteTournament(id: string): Promise<void> {
   try {
     await api.delete(`/tournaments/${id}`);

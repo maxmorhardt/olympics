@@ -21,7 +21,8 @@ export function ChampionModal({ open, championName, members, onClose }: Props) {
           sx: {
             overflow: 'visible',
             textAlign: 'center',
-            p: { xs: 3, sm: 5 },
+            p: { xs: 2.5, sm: 5 },
+            mx: { xs: 2, sm: 4 },
             color: '#fff',
             background: 'radial-gradient(circle at 50% 30%, #2a1d09 0%, #120c04 100%)',
             border: '2px solid #F5A623',
@@ -30,11 +31,15 @@ export function ChampionModal({ open, championName, members, onClose }: Props) {
         },
       }}
     >
-      <Box sx={{ fontSize: 56, mb: 1 }}>🎉🏆🎉</Box>
+      <Box sx={{ fontSize: { xs: 38, sm: 56 }, mb: 1 }}>🎉🏆🎉</Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
         <EmojiEventsIcon
-          sx={{ fontSize: 96, color: '#FFD27D', animation: `${floatY} 3s ease-in-out infinite` }}
+          sx={{
+            fontSize: { xs: 64, sm: 96 },
+            color: '#FFD27D',
+            animation: `${floatY} 3s ease-in-out infinite`,
+          }}
         />
       </Box>
 
@@ -48,9 +53,10 @@ export function ChampionModal({ open, championName, members, onClose }: Props) {
       <Typography
         sx={{
           fontWeight: 900,
-          fontSize: { xs: '2.4rem', sm: '3.2rem' },
+          fontSize: { xs: '1.9rem', sm: '3.2rem' },
           lineHeight: 1.1,
           my: 1,
+          wordBreak: 'break-word',
           backgroundImage: 'linear-gradient(90deg, #F5A623, #FFD27D, #FF7043, #F5A623)',
           backgroundSize: '200% auto',
           backgroundClip: 'text',
@@ -63,13 +69,13 @@ export function ChampionModal({ open, championName, members, onClose }: Props) {
       </Typography>
 
       {members.length > 0 && (
-        <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.25rem', mb: 0.5 }}>
+        <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: { xs: '1.05rem', sm: '1.25rem' }, mb: 0.5 }}>
           {members.join(' & ')}
         </Typography>
       )}
 
-      <Typography sx={{ color: 'rgba(255,255,255,0.8)', mb: 3 }}>
-        Champions of the Games. Immortalized.
+      <Typography sx={{ color: 'rgba(255,255,255,0.8)', fontSize: { xs: '0.9rem', sm: '1rem' }, mb: 3 }}>
+        Champions of the Games.
       </Typography>
 
       <Button

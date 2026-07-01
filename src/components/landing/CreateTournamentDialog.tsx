@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
@@ -9,6 +10,7 @@ import {
 import { useState } from 'react';
 import { createTournament } from '../../features/tournaments/tournamentsThunks';
 import { useAppDispatch } from '../../hooks/reduxHooks';
+import type { APIError } from '../../types/error';
 import { stripDangerousChars } from '../../utils/sanitize';
 
 interface Props {
@@ -22,20 +24,22 @@ export function CreateTournamentDialog({ open, onClose, onCreated }: Props) {
 
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCreate = async () => {
     if (!name.trim()) {
       return;
     }
 
+    setError(null);
     setSaving(true);
     try {
       const created = await dispatch(
         createTournament({ name: stripDangerousChars(name).trim() })
       ).unwrap();
       onCreated(created.id);
-    } catch {
-      // creation failed; leave the dialog open so the user can retry
+    } catch (err: unknown) {
+      setError((err as APIError)?.message ?? 'Failed to create tournament');
     } finally {
       setSaving(false);
     }
@@ -54,6 +58,11 @@ export function CreateTournamentDialog({ open, onClose, onCreated }: Props) {
           autoFocus
           sx={{ mt: 1 }}
         />
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
