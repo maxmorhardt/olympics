@@ -97,6 +97,7 @@ export function Bracket({ matches, canManage, onSelect }: Props) {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         px: 0.75,
+                        py: 1,
                         animation: `${fadeInUp} 0.5s ease both`,
                         animationDelay: `${ri * 0.12 + mi * 0.06}s`,
                       }}

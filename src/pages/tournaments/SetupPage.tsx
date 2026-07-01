@@ -54,7 +54,7 @@ export default function SetupPage() {
         </Box>
       )}
 
-      {canManage && (
+      {canManage && tournament?.status === 'setup' && (
         <Paper variant="outlined" sx={{ p: 2, width: '100%', maxWidth: 480 }}>
           <TextField
             label="Add names (one per line or comma separated)"
