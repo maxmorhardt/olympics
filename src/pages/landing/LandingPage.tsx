@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from 'react-oidc-context';
 import { useNavigate } from 'react-router-dom';
 import { CreateTournamentDialog } from '../../components/landing/CreateTournamentDialog';
@@ -23,7 +23,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import type { Tournament } from '../../types/tournament';
 import { isOlympicsAdmin } from '../../utils/oidcHelpers';
 
-const DEFAULT_GAMES = ['Cornhole', 'Darts', 'Ladder Ball', 'Beer Pong'];
+const DEFAULT_GAMES = ['Darts', 'Bocce', 'Cornhole'];
 
 export default function LandingPage() {
   const dispatch = useAppDispatch();
@@ -44,12 +44,7 @@ export default function LandingPage() {
   const active = latest && latest.status !== 'finished' ? latest : null;
   const finished = latest && latest.status === 'finished' ? latest : null;
 
-  const games = useMemo(() => {
-    if (active?.gameTypes?.length) {
-      return active.gameTypes;
-    }
-    return DEFAULT_GAMES;
-  }, [active]);
+  const games = DEFAULT_GAMES;
 
   return (
     <Box
@@ -69,7 +64,10 @@ export default function LandingPage() {
     >
       <FloatingIcons />
 
-      <Stack spacing={4} alignItems="center" sx={{ position: 'relative', zIndex: 1, maxWidth: 720 }}>
+      <Stack
+        spacing={4}
+        sx={{ position: 'relative', zIndex: 1, maxWidth: 720, alignItems: 'center' }}
+      >
         <Box sx={{ animation: `${fadeInUp} 0.7s ease both` }}>
           <Emblem icon={finished ? '🥇' : '🏆'} />
         </Box>
@@ -99,12 +97,12 @@ export default function LandingPage() {
           sx={{ textAlign: 'center', animation: `${fadeInUp} 0.7s ease both`, animationDelay: '0.2s' }}
         >
           {loading
-            ? 'Loading the arena…'
+            ? 'Preparing the arena...'
             : active
-              ? 'The games are live. Grab your partner and bring the heat.'
+              ? 'The Games are underway. Every throw echoes through history.'
               : finished
-                ? 'The champions have been crowned.'
-                : 'Random teams. Backyard games. One champion. Let the games begin.'}
+                ? 'The Games are decided. The champions are immortal.'
+                : 'The most hallowed backyard on Earth. Darts, bocce, and cornhole will decide who is forever remembered.'}
         </Typography>
 
         {/* state-dependent call to action */}
@@ -145,7 +143,7 @@ export default function LandingPage() {
               </Button>
             </Paper>
           ) : finished ? (
-            <Stack spacing={2} alignItems="center">
+            <Stack spacing={2} sx={{ alignItems: 'center' }}>
               <Button
                 size="large"
                 variant="contained"
@@ -163,13 +161,9 @@ export default function LandingPage() {
             <Button size="large" variant="contained" onClick={() => setCreateOpen(true)}>
               Create the Games
             </Button>
-          ) : auth.isAuthenticated ? (
-            <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
-              No games scheduled yet. An organizer will kick things off soon — check back!
-            </Typography>
           ) : (
             <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
-              No games scheduled yet. Log in to follow along.
+              No games scheduled yet. Check back soon for the next event.
             </Typography>
           )}
         </Box>
@@ -178,10 +172,13 @@ export default function LandingPage() {
         <Stack
           direction="row"
           spacing={1}
-          flexWrap="wrap"
-          justifyContent="center"
-          useFlexGap
-          sx={{ animation: `${fadeInUp} 0.7s ease both`, animationDelay: '0.4s' }}
+          sx={{
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: 1,
+            animation: `${fadeInUp} 0.7s ease both`,
+            animationDelay: '0.4s',
+          }}
         >
           {games.map((g) => (
             <Chip key={g} label={g} variant="outlined" color="primary" />

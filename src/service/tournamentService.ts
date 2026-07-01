@@ -111,3 +111,36 @@ export async function recordResult(
     throw handleError(err);
   }
 }
+
+export async function deleteTournament(id: string): Promise<void> {
+  try {
+    await api.delete(`/tournaments/${id}`);
+  } catch (err: unknown) {
+    throw handleError(err);
+  }
+}
+
+export async function updateTeam(id: string, teamId: string, name: string): Promise<Tournament> {
+  try {
+    const res = await api.patch<Tournament>(`/tournaments/${id}/teams/${teamId}`, { name });
+    return res.data;
+  } catch (err: unknown) {
+    throw handleError(err);
+  }
+}
+
+export async function swapPlayers(
+  id: string,
+  participantAId: string,
+  participantBId: string
+): Promise<Tournament> {
+  try {
+    const res = await api.post<Tournament>(`/tournaments/${id}/teams/swap`, {
+      participantAId,
+      participantBId,
+    });
+    return res.data;
+  } catch (err: unknown) {
+    throw handleError(err);
+  }
+}

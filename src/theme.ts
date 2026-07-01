@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material';
 
-// amber/gold dark theme — distinct from the blue (squares) and purple (maxstash) sites
+// amber/gold dark theme, distinct from the blue (squares) and purple (maxstash) sites
 export const theme = createTheme({
   palette: {
     mode: 'dark',
