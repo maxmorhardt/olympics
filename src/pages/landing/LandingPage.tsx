@@ -51,12 +51,12 @@ export default function LandingPage() {
       sx={{
         position: 'relative',
         overflow: 'hidden',
-        minHeight: 'calc(100dvh - 64px)',
+        minHeight: { xs: 'calc(100dvh - 56px)', sm: 'calc(100dvh - 64px)' },
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         px: 2,
-        py: 8,
+        py: { xs: 3, md: 8 },
         background: 'linear-gradient(120deg, #120f0a 0%, #1f1813 35%, #2a1c10 50%, #1f1813 65%, #120f0a 100%)',
         backgroundSize: '300% 300%',
         animation: `${gradientShift} 18s ease infinite`,
@@ -65,7 +65,7 @@ export default function LandingPage() {
       <FloatingIcons />
 
       <Stack
-        spacing={4}
+        spacing={{ xs: 2, md: 4 }}
         sx={{ position: 'relative', zIndex: 1, maxWidth: 720, alignItems: 'center' }}
       >
         <Box sx={{ animation: `${fadeInUp} 0.7s ease both` }}>
@@ -78,7 +78,7 @@ export default function LandingPage() {
             fontWeight: 800,
             letterSpacing: '.05em',
             textAlign: 'center',
-            fontSize: { xs: '2.5rem', md: '4rem' },
+            fontSize: { xs: '2rem', sm: '3rem', md: '4rem' },
             backgroundImage: 'linear-gradient(90deg, #F5A623, #FFD27D, #FF7043, #F5A623)',
             backgroundSize: '200% auto',
             backgroundClip: 'text',
@@ -94,15 +94,20 @@ export default function LandingPage() {
         <Typography
           variant="h6"
           color="text.secondary"
-          sx={{ textAlign: 'center', animation: `${fadeInUp} 0.7s ease both`, animationDelay: '0.2s' }}
+          sx={{
+            textAlign: 'center',
+            fontSize: { xs: '0.95rem', md: '1.25rem' },
+            animation: `${fadeInUp} 0.7s ease both`,
+            animationDelay: '0.2s',
+          }}
         >
           {loading
-            ? 'Preparing the arena...'
+            ? 'Summoning the officials...'
             : active
-              ? 'The Games are underway. Every throw echoes through history.'
+              ? 'The Games are underway. Grown adults now stare down destiny, one beanbag at a time.'
               : finished
-                ? 'The Games are decided. The champions are immortal.'
-                : 'The most hallowed backyard on Earth. Darts, bocce, and cornhole will decide who is forever remembered.'}
+                ? 'It is finished. Champions have been crowned, and this lawn shall speak of them for generations.'
+                : 'Behold the most hallowed backyard on Earth, where ordinary souls chase glory through darts, bocce, and cornhole. History is watching.'}
         </Typography>
 
         {/* state-dependent call to action */}
@@ -120,7 +125,7 @@ export default function LandingPage() {
           ) : active ? (
             <Paper
               sx={{
-                p: 3,
+                p: { xs: 2, sm: 3 },
                 width: '100%',
                 maxWidth: 480,
                 textAlign: 'center',
@@ -131,7 +136,7 @@ export default function LandingPage() {
               <Typography variant="overline" color="text.secondary">
                 Now playing
               </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, wordBreak: 'break-word' }}>
                 {active.name}
               </Typography>
               <Button

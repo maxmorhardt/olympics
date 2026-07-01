@@ -3,6 +3,7 @@ import { Box, Button, Chip, Paper, Stack, TextField, Typography } from '@mui/mat
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addParticipants, generateTeams } from '../../features/tournaments/tournamentsThunks';
+import { useToast } from '../../components/toast/toastContext';
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import { useTournament } from '../../hooks/useTournament';
 import { stripDangerousChars } from '../../utils/sanitize';
@@ -11,13 +12,14 @@ export default function SetupPage() {
   const { id = '' } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const showToast = useToast();
   const { tournament, canManage, busy, runAction } = useTournament(id);
 
   const [names, setNames] = useState('');
 
   const participants = tournament?.participants ?? [];
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const parsed = names
       .split(/[\n,]/)
       .map((n) => stripDangerousChars(n).trim())
@@ -26,14 +28,19 @@ export default function SetupPage() {
       return;
     }
     setNames('');
-    runAction(dispatch(addParticipants({ id, names: parsed })));
+    const err = await runAction(dispatch(addParticipants({ id, names: parsed })));
+    if (err) {
+      showToast(err, 'error');
+    }
   };
 
   const handleGenerate = async () => {
-    const ok = await runAction(dispatch(generateTeams(id)));
-    if (ok) {
-      navigate(`/tournaments/${id}/teams`);
+    const err = await runAction(dispatch(generateTeams(id)));
+    if (err) {
+      showToast(err, 'error');
+      return;
     }
+    navigate(`/tournaments/${id}/teams`);
   };
 
   return (
@@ -57,15 +64,21 @@ export default function SetupPage() {
       {canManage && tournament?.status === 'setup' && (
         <Paper variant="outlined" sx={{ p: 2, width: '100%', maxWidth: 480 }}>
           <TextField
-            label="Add names (one per line or comma separated)"
+            label="Participants"
+            placeholder="Add names, one per line or comma separated"
             multiline
             minRows={3}
             fullWidth
             value={names}
             onChange={(e) => setNames(e.target.value)}
           />
-          <Stack direction="row" spacing={2} sx={{ mt: 2, flexWrap: 'wrap', gap: 1 }}>
-            <Button variant="outlined" disabled={busy} onClick={handleAdd}>
+          <Stack direction="row" spacing={1.5} sx={{ mt: 2 }}>
+            <Button
+              variant="outlined"
+              disabled={busy}
+              onClick={handleAdd}
+              sx={{ flex: 1, fontSize: { xs: '0.75rem', sm: '0.875rem' }, whiteSpace: 'nowrap' }}
+            >
               Add Participants
             </Button>
             <Button
@@ -73,6 +86,12 @@ export default function SetupPage() {
               startIcon={<GroupsIcon />}
               disabled={busy || participants.length < 2}
               onClick={handleGenerate}
+              sx={{
+                flex: 1,
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                whiteSpace: 'nowrap',
+                '& .MuiButton-startIcon': { display: { xs: 'none', sm: 'inherit' } },
+              }}
             >
               Generate Teams
             </Button>

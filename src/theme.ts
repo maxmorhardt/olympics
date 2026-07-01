@@ -18,6 +18,14 @@ export const theme = createTheme({
   shape: {
     borderRadius: 10,
   },
+  components: {
+    // keep every input at >=16px so iOS Safari never auto-zooms on focus
+    MuiInputBase: {
+      styleOverrides: {
+        input: { fontSize: 16 },
+      },
+    },
+  },
 });
 
 export const gradients = {

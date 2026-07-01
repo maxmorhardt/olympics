@@ -67,13 +67,16 @@ export default function TeamsPage() {
     [teams]
   );
 
-  const handleSaveTeamName = (teamId: string) => {
+  const handleSaveTeamName = async (teamId: string) => {
     const name = stripDangerousChars(editValue).trim();
     if (!name) {
       return;
     }
     setEditingTeamId(null);
-    runAction(dispatch(updateTeam({ id, teamId, name })));
+    const err = await runAction(dispatch(updateTeam({ id, teamId, name })));
+    if (err) {
+      showToast(err, 'error');
+    }
   };
 
   const handleSwap = async () => {
@@ -82,21 +85,25 @@ export default function TeamsPage() {
     if (!a || !b || a.teamId === b.teamId) {
       return;
     }
-    const ok = await runAction(
+    const err = await runAction(
       dispatch(swapPlayers({ id, participantAId: swapA, participantBId: swapB }))
     );
-    if (ok) {
-      setSwapA('');
-      setSwapB('');
-      showToast('Players swapped', 'success');
+    if (err) {
+      showToast(err, 'error');
+      return;
     }
+    setSwapA('');
+    setSwapB('');
+    showToast('Players swapped', 'success');
   };
 
   const handleGenerateGroups = async () => {
-    const ok = await runAction(dispatch(generateGroups(id)));
-    if (ok) {
-      navigate(`/tournaments/${id}/groups`);
+    const err = await runAction(dispatch(generateGroups(id)));
+    if (err) {
+      showToast(err, 'error');
+      return;
     }
+    navigate(`/tournaments/${id}/groups`);
   };
 
   return (

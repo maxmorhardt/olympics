@@ -1,5 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
+  Alert,
   Box,
   Button,
   Chip,
@@ -23,6 +24,7 @@ import { deleteTournament, fetchTournamentBundle } from '../../features/tourname
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import { useTournament } from '../../hooks/useTournament';
 import { useTournamentSocket } from '../../hooks/useTournamentSocket';
+import type { APIError } from '../../types/error';
 import type { TournamentStatus } from '../../types/tournament';
 import type { WSMessage } from '../../types/ws';
 import { currentStagePath, reachedStageIndex, STAGES } from './stages';
@@ -39,6 +41,7 @@ export default function TournamentLayout() {
 
   const [scoreEvent, setScoreEvent] = useState<ScoreEvent | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [championDismissed, setChampionDismissed] = useState(false);
   const statusRef = useRef<TournamentStatus | null>(null);
 
@@ -103,11 +106,12 @@ export default function TournamentLayout() {
   useTournamentSocket(id, onMessage);
 
   const handleDelete = async () => {
+    setDeleteError(null);
     try {
       await dispatch(deleteTournament(id)).unwrap();
       navigate('/');
-    } catch {
-      // deletion failed; stay on the page
+    } catch (err: unknown) {
+      setDeleteError((err as APIError)?.message ?? 'Failed to delete tournament');
     }
   };
 
@@ -135,9 +139,12 @@ export default function TournamentLayout() {
   );
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1, flexWrap: 'wrap' }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1, flexWrap: 'wrap' }}>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 800, fontSize: { xs: '1.6rem', sm: '2.125rem' } }}
+        >
           {tournament.name}
         </Typography>
         <Chip label={statusLabel(tournament.status)} color="primary" variant="outlined" />
@@ -152,7 +159,16 @@ export default function TournamentLayout() {
         Organized by {tournament.createdBy || 'unknown'}
       </Typography>
 
-      <Stepper nonLinear activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
+      <Stepper
+        nonLinear
+        activeStep={activeStep}
+        alternativeLabel
+        sx={{
+          mb: { xs: 3, sm: 4 },
+          '& .MuiStepLabel-label': { fontSize: { xs: '0.7rem', sm: '0.875rem' }, mt: { xs: 0.5, sm: 1 } },
+          '& .MuiStepIcon-root': { fontSize: { xs: '1.35rem', sm: '1.75rem' } },
+        }}
+      >
         {STAGES.map((stage, idx) => (
           <Step key={stage.key} completed={idx < reached}>
             <StepButton
@@ -177,15 +193,33 @@ export default function TournamentLayout() {
         onClose={() => setChampionDismissed(true)}
       />
 
-      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
+      <Dialog
+        open={confirmDelete}
+        onClose={() => {
+          setConfirmDelete(false);
+          setDeleteError(null);
+        }}
+      >
         <DialogTitle>Delete this tournament?</DialogTitle>
         <DialogContent>
           <Typography>
             This permanently removes {tournament.name}, including all teams, games, and results.
           </Typography>
+          {deleteError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {deleteError}
+            </Alert>
+          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmDelete(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setConfirmDelete(false);
+              setDeleteError(null);
+            }}
+          >
+            Cancel
+          </Button>
           <Button color="error" variant="contained" onClick={handleDelete}>
             Delete
           </Button>

@@ -1,5 +1,6 @@
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Stack, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
+import { useState } from 'react';
 import { fadeInUp, stakesPulse } from '../landing/animations';
 import { gradients } from '../../theme';
 import type { Match } from '../../types/tournament';
@@ -41,9 +42,58 @@ function roundLabel(round: number, totalRounds: number): string {
 }
 
 export function Bracket({ matches, canManage, onSelect }: Props) {
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const [roundIdx, setRoundIdx] = useState(() => {
+    const rs = toRounds(matches);
+    const live = rs.findIndex((r) => r.matches.some((m) => m.status !== 'completed'));
+    return live >= 0 ? live : Math.max(0, rs.length - 1);
+  });
+
   const rounds = toRounds(matches);
+  const byId = new Map(matches.map((m) => [m.id, m]));
+  const nextCompleted = (m: Match) =>
+    m.nextMatchId ? byId.get(m.nextMatchId)?.status === 'completed' : false;
+
   if (rounds.length === 0) {
     return null;
+  }
+
+  // on mobile, one round at a time via a tab selector instead of a wide bracket
+  if (isMobile) {
+    const safeIdx = Math.min(roundIdx, rounds.length - 1);
+    const isFinalRound = safeIdx === rounds.length - 1;
+    return (
+      <Box>
+        <Tabs
+          value={safeIdx}
+          onChange={(_, v) => setRoundIdx(v)}
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
+          sx={{
+            mb: 2,
+            minHeight: 40,
+            '& .MuiTab-root': { minHeight: 40, fontSize: '0.72rem', fontWeight: 700 },
+          }}
+        >
+          {rounds.map((r) => (
+            <Tab key={r.round} label={roundLabel(r.round, rounds.length).toUpperCase()} />
+          ))}
+        </Tabs>
+        <Stack spacing={1.5}>
+          {rounds[safeIdx].matches.map((m) => (
+            <BracketMatch
+              key={m.id}
+              match={m}
+              canManage={canManage}
+              onSelect={onSelect}
+              isFinal={isFinalRound}
+              nextCompleted={nextCompleted(m)}
+            />
+          ))}
+        </Stack>
+      </Box>
+    );
   }
 
   return (
@@ -107,6 +157,7 @@ export function Bracket({ matches, canManage, onSelect }: Props) {
                         canManage={canManage}
                         onSelect={onSelect}
                         isFinal={isFinalRound}
+                        nextCompleted={nextCompleted(m)}
                       />
                     </Box>
                   ))}
@@ -161,15 +212,18 @@ function BracketMatch({
   canManage,
   onSelect,
   isFinal,
+  nextCompleted,
 }: {
   match: Match;
   canManage: boolean;
   onSelect: (m: Match) => void;
   isFinal: boolean;
+  nextCompleted: boolean;
 }) {
   const completed = match.status === 'completed';
   const ready = Boolean(match.teamAId && match.teamBId);
-  const clickable = canManage && !completed && ready;
+  // pending+ready opens the score dialog; completed opens the undo confirm (unless its winner already played on)
+  const clickable = canManage && ready && (!completed || !nextCompleted);
   // an empty slot in a completed match is a bye; otherwise it is still to be decided
   const placeholder = completed ? 'Bye' : 'TBD';
 

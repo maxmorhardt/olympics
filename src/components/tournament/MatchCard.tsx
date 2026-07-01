@@ -1,3 +1,4 @@
+import UndoIcon from '@mui/icons-material/Undo';
 import { Box, Button, Chip, Paper, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useToast } from '../toast/toastContext';
@@ -6,10 +7,12 @@ import type { Match } from '../../types/tournament';
 interface Props {
   match: Match;
   canManage: boolean;
-  onRecord: (matchId: string, teamAScore: number, teamBScore: number) => Promise<unknown>;
+  allowRollback?: boolean;
+  onRecord: (matchId: string, teamAScore: number, teamBScore: number) => Promise<string | null>;
+  onRollback?: (matchId: string) => Promise<string | null>;
 }
 
-export function MatchCard({ match, canManage, onRecord }: Props) {
+export function MatchCard({ match, canManage, allowRollback, onRecord, onRollback }: Props) {
   const showToast = useToast();
   const [scoreA, setScoreA] = useState('');
   const [scoreB, setScoreB] = useState('');
@@ -22,6 +25,21 @@ export function MatchCard({ match, canManage, onRecord }: Props) {
 
   const aWon = completed && match.winnerTeamId === match.teamAId;
   const bWon = completed && match.winnerTeamId === match.teamBId;
+
+  const handleUndo = async () => {
+    if (!onRollback) {
+      return;
+    }
+    setSaving(true);
+    try {
+      const err = await onRollback(match.id);
+      if (err) {
+        showToast(err, 'error');
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleSubmit = async () => {
     const a = Number(scoreA);
@@ -36,7 +54,10 @@ export function MatchCard({ match, canManage, onRecord }: Props) {
     }
     setSaving(true);
     try {
-      await onRecord(match.id, a, b);
+      const err = await onRecord(match.id, a, b);
+      if (err) {
+        showToast(err, 'error');
+      }
     } finally {
       setSaving(false);
     }
@@ -92,6 +113,20 @@ export function MatchCard({ match, canManage, onRecord }: Props) {
             // tie is validated on submit so the user gets a toast
           >
             Save
+          </Button>
+        </Box>
+      )}
+
+      {canManage && completed && ready && allowRollback && onRollback && (
+        <Box sx={{ mt: 1.5 }}>
+          <Button
+            size="small"
+            color="inherit"
+            startIcon={<UndoIcon fontSize="small" />}
+            disabled={saving}
+            onClick={handleUndo}
+          >
+            Undo
           </Button>
         </Box>
       )}
