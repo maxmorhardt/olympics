@@ -45,6 +45,40 @@ export async function addParticipants(id: string, names: string[]): Promise<Tour
   }
 }
 
+export async function addParticipant(id: string, name: string): Promise<Tournament> {
+  try {
+    const res = await api.post<Tournament>(`/tournaments/${id}/participants/one`, { name });
+    return res.data;
+  } catch (err: unknown) {
+    throw handleError(err);
+  }
+}
+
+export async function updateParticipant(
+  id: string,
+  participantId: string,
+  name: string
+): Promise<Tournament> {
+  try {
+    const res = await api.patch<Tournament>(
+      `/tournaments/${id}/participants/${participantId}`,
+      { name }
+    );
+    return res.data;
+  } catch (err: unknown) {
+    throw handleError(err);
+  }
+}
+
+export async function deleteParticipant(id: string, participantId: string): Promise<Tournament> {
+  try {
+    const res = await api.delete<Tournament>(`/tournaments/${id}/participants/${participantId}`);
+    return res.data;
+  } catch (err: unknown) {
+    throw handleError(err);
+  }
+}
+
 export async function generateTeams(id: string): Promise<Team[]> {
   try {
     const res = await api.post<Team[]>(`/tournaments/${id}/teams/generate`);

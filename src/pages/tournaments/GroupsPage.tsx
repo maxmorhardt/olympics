@@ -126,7 +126,6 @@ export default function GroupsPage() {
   );
 }
 
-// group a group's matches by the round the backend scheduled them into
 function byRound(matches: Match[]): { round: number; matches: Match[] }[] {
   const map = new Map<number, Match[]>();
   for (const m of matches) {

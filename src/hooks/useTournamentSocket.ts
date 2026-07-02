@@ -3,7 +3,6 @@ import type { WSMessage } from '../types/ws';
 
 const RECONNECT_MS = 2500;
 
-// subscribes to the tournament's broadcast room; reconnects on drop
 export function useTournamentSocket(id: string | undefined, onMessage: (msg: WSMessage) => void) {
   const onMessageRef = useRef(onMessage);
   onMessageRef.current = onMessage;

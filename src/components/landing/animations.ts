@@ -58,6 +58,12 @@ export const stakesPulse = keyframes`
   50% { box-shadow: 0 0 28px 6px rgba(255,112,67,0.6); }
 `;
 
+// podium blocks growing up from the floor
+export const growUp = keyframes`
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+`;
+
 // big attention-grabbing entrance for the score popup
 export const bounceIn = keyframes`
   0% { opacity: 0; transform: scale(0.5) translateY(-50px); }

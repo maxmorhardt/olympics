@@ -185,8 +185,8 @@ export default function TeamsPage() {
         })}
       </Box>
 
-      {/* swap players (only before groups are drawn) */}
-      {canManage && isRevealStage && done && players.length >= 2 && (
+      {/* swap players: safe at any point since results stay tied to the team */}
+      {canManage && done && players.length >= 2 && tournament?.status !== 'finished' && (
         <Paper variant="outlined" sx={{ p: 2, mt: 4, maxWidth: 640, mx: 'auto' }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2 }}>
             Swap Players

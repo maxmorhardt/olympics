@@ -28,8 +28,7 @@ export function useTournament(id: string) {
 
   const [busy, setBusy] = useState(false);
 
-  // only surface store data once it belongs to THIS tournament, so stage pages
-  // never render (or compute canManage) against a previously-viewed tournament
+  // only surface store data once it belongs to this tournament, not the previous one
   const matchesThisTournament = current?.id === id;
   const tournament = matchesThisTournament ? current : null;
   const matches = matchesThisTournament ? storeMatches : [];

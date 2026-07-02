@@ -14,6 +14,7 @@ import NotFoundPage from './pages/error/NotFoundPage';
 import LandingPage from './pages/landing/LandingPage';
 import BracketPage from './pages/tournaments/BracketPage';
 import GroupsPage from './pages/tournaments/GroupsPage';
+import ResultsPage from './pages/tournaments/ResultsPage';
 import SetupPage from './pages/tournaments/SetupPage';
 import StageRedirect from './pages/tournaments/StageRedirect';
 import TeamsPage from './pages/tournaments/TeamsPage';
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
           { path: 'teams', element: <TeamsPage /> },
           { path: 'groups', element: <GroupsPage /> },
           { path: 'bracket', element: <BracketPage /> },
+          { path: 'results', element: <ResultsPage /> },
         ],
       },
       { path: 'auth/callback', element: <CallbackPage /> },

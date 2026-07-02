@@ -16,9 +16,8 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ChampionModal } from '../../components/tournament/ChampionModal';
 import { ScorePopup, type ScoreEvent } from '../../components/tournament/ScorePopup';
 import { deleteTournament, fetchTournamentBundle } from '../../features/tournaments/tournamentsThunks';
 import { useAppDispatch } from '../../hooks/reduxHooks';
@@ -35,34 +34,17 @@ export default function TournamentLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { tournament: loaded, loading, canManage, bracket } = useTournament(id);
-  
+  const { tournament: loaded, loading, canManage } = useTournament(id);
+
   const tournament = loaded && loaded.id === id ? loaded : null;
 
   const [scoreEvent, setScoreEvent] = useState<ScoreEvent | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [championDismissed, setChampionDismissed] = useState(false);
   const statusRef = useRef<TournamentStatus | null>(null);
-
-  const champion = useMemo(() => {
-    if (tournament?.status !== 'finished') {
-      return null;
-    }
-    const final = bracket.find((m) => !m.nextMatchId && m.status === 'completed');
-    if (!final?.winnerTeamId) {
-      return null;
-    }
-    const team = tournament.teams?.find((t) => t.id === final.winnerTeamId);
-    if (!team) {
-      return null;
-    }
-    return { name: team.name, members: (team.members ?? []).map((m) => m.name) };
-  }, [tournament, bracket]);
 
   useEffect(() => {
     setScoreEvent(null);
-    setChampionDismissed(false);
     setConfirmDelete(false);
     statusRef.current = null;
   }, [id]);
@@ -185,13 +167,6 @@ export default function TournamentLayout() {
       <Outlet />
 
       <ScorePopup event={scoreEvent} />
-
-      <ChampionModal
-        open={Boolean(champion) && !championDismissed}
-        championName={champion?.name ?? ''}
-        members={champion?.members ?? []}
-        onClose={() => setChampionDismissed(true)}
-      />
 
       <Dialog
         open={confirmDelete}
