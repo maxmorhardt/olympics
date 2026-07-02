@@ -7,7 +7,7 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createTournament } from '../../features/tournaments/tournamentsThunks';
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import type { APIError } from '../../types/error';
@@ -25,6 +25,14 @@ export function CreateTournamentDialog({ open, onClose, onCreated }: Props) {
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // clear transient state when the dialog closes so stale errors do not persist across sessions
+  useEffect(() => {
+    if (!open) {
+      setError(null);
+      setSaving(false);
+    }
+  }, [open]);
 
   const handleCreate = async () => {
     if (!name.trim()) {

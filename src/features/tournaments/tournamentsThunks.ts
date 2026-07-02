@@ -69,6 +69,45 @@ export const addParticipants = createAsyncThunk<
   }
 });
 
+export const addParticipant = createAsyncThunk<
+  Tournament,
+  { id: string; name: string },
+  { rejectValue: APIError }
+>('tournaments/addParticipant', async ({ id, name }, { rejectWithValue }) => {
+  try {
+    return await service.addParticipant(id, name);
+  } catch (err: unknown) {
+    return rejectWithValue(err as APIError);
+  }
+});
+
+export const updateParticipant = createAsyncThunk<
+  Tournament,
+  { id: string; participantId: string; name: string },
+  { rejectValue: APIError }
+>(
+  'tournaments/updateParticipant',
+  async ({ id, participantId, name }, { rejectWithValue }) => {
+    try {
+      return await service.updateParticipant(id, participantId, name);
+    } catch (err: unknown) {
+      return rejectWithValue(err as APIError);
+    }
+  }
+);
+
+export const deleteParticipant = createAsyncThunk<
+  Tournament,
+  { id: string; participantId: string },
+  { rejectValue: APIError }
+>('tournaments/deleteParticipant', async ({ id, participantId }, { rejectWithValue }) => {
+  try {
+    return await service.deleteParticipant(id, participantId);
+  } catch (err: unknown) {
+    return rejectWithValue(err as APIError);
+  }
+});
+
 export const generateTeams = createAsyncThunk<void, string, { rejectValue: APIError }>(
   'tournaments/generateTeams',
   async (id, { rejectWithValue }) => {

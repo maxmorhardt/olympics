@@ -11,6 +11,7 @@ export const STAGES: Stage[] = [
   { key: 'teams', label: 'Teams', path: 'teams' },
   { key: 'groups', label: 'Group Play', path: 'groups' },
   { key: 'bracket', label: 'Playoffs', path: 'bracket' },
+  { key: 'results', label: 'Results', path: 'results' },
 ];
 
 export function reachedStageIndex(status: TournamentStatus): number {
@@ -22,8 +23,9 @@ export function reachedStageIndex(status: TournamentStatus): number {
     case 'group_stage':
       return 2;
     case 'playoffs':
-    case 'finished':
       return 3;
+    case 'finished':
+      return 4;
     default:
       return 0;
   }

@@ -1,7 +1,6 @@
 import { Box } from '@mui/material';
 import { floatY, glowPulse, spin } from './animations';
 
-// glowing medallion with a rotating gold ring and a centerpiece emoji
 export function Emblem({ icon = '🏆' }: { icon?: string }) {
   return (
     <Box sx={{ animation: `${floatY} 5s ease-in-out infinite`, display: 'inline-block' }}>
