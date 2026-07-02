@@ -117,7 +117,7 @@ function buildStats(matches: Match[], teams: Map<string, Team>): StatItem[] {
   const pointDiff = new Map<string, number>();
 
   const bump = (game: string, teamId: string, wins: number, points: number, diff: number) => {
-    const perTeam = gameWins.get(game) ?? new Map();
+    const perTeam = gameWins.get(game) ?? new Map<string, { wins: number; points: number }>();
     const cur = perTeam.get(teamId) ?? { wins: 0, points: 0 };
     cur.wins += wins;
     cur.points += points;
@@ -211,7 +211,7 @@ export function computeResults(
   standings: GroupStandings[],
   teamList: Team[]
 ): Results {
-  const teams = new Map(teamList.map((t) => [t.id, t]));
+  const teams = new Map<string, Team>(teamList.map((t) => [t.id, t] as const));
   return {
     podium: buildPodium(bracket, standings, teams),
     stats: buildStats(matches, teams),
